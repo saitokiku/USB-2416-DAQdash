@@ -17,6 +17,7 @@ class AnalogInDisplay(tk.Frame):
         self.app = app  # Store the DashboardApp instance
         self.custom_name = "Analog In"
         self.value = 0.00
+        self.locked = False
         self.scalar_label = tk.Label(self, text=f"{self.custom_name}: {self.value:.2f} V", font=('Helvetica', 14), height=2, width=20)
         self.scalar_label.pack()
 

@@ -8,6 +8,7 @@ class DigitalOutButton(tk.Button):
         super().__init__(master, text='Digital Out: OFF', font=('Helvetica', 14), height=2, width=20, **kwargs)
         self.board_num = board_num
         self.channel = channel
+        self.locked = False
         self.state = False
         self.value = 'OFF'  # Add a value attribute
         self.custom_name = "Digital Out"  # Add a custom name attribute

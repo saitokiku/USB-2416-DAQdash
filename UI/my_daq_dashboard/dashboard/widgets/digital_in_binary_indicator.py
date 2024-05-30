@@ -9,6 +9,7 @@ class DigitalInBinaryIndicator(tk.Label):
         super().__init__(master, text='Digital In: 0', font=('Helvetica', 14), height=2, width=20, bg='lightgrey', **kwargs)
         self.board_num = board_num
         self.port_type = port_type
+        self.locked = False
         self.value = 0  # Add a value attribute
         self.custom_name = "Digital In"  # Add a custom name attribute
         self.bind("<Button-1>", on_drag_start)

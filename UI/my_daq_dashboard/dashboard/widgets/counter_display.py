@@ -8,6 +8,7 @@ class CounterDisplay(tk.Label):
         self.board_num = board_num
         self.counter_num = counter_num
         self.value = 0  # Add a value attribute
+        self.locked = False
         self.custom_name = "Counter"  # Add a custom name attribute
         self.bind("<Button-1>", on_drag_start)
         self.bind("<B1-Motion>", on_drag_motion)
