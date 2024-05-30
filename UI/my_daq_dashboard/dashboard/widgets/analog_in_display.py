@@ -14,13 +14,15 @@ from utils.events import on_drag_start, on_drag_motion, right_click_menu
 class AnalogInDisplay(tk.Frame):
     def __init__(self, master, app, **kwargs):
         super().__init__(master, **kwargs)
-        self.app = app  # Store the DashboardApp instance
+        self.app = app
         self.custom_name = "Analog In"
         self.value = 0.00
         self.locked = False
         self.scalar_label = tk.Label(self, text=f"{self.custom_name}: {self.value:.2f} V", font=('Helvetica', 14), height=2, width=20)
         self.scalar_label.pack()
+        self.update_display_id = None
 
+        # Configuration Parameters
         self.board_num = 0
         self.low_chan = 0
         self.high_chan = 0  # Assuming a single channel for simplicity; adjust as needed
@@ -52,7 +54,7 @@ class AnalogInDisplay(tk.Frame):
         self.canvas_widget = self.canvas.get_tk_widget()
         self.canvas_widget.pack(fill=tk.BOTH, expand=True)
 
-        self.ani = FuncAnimation(self.fig, self.update_plot, interval=100, cache_frame_data=False)
+        self.ani = FuncAnimation(self.fig, self.update_plot, interval=100, blit=True, save_count=50)
 
     def update_plot(self, frame):
         try:
@@ -114,7 +116,17 @@ class AnalogInDisplay(tk.Frame):
         except Exception as e:
             print(f"Error releasing device: {e}")
 
+    def update_display(self):
+        try:
+            self.value = self.app.read_analog_input(0)
+            self.scalar_label.config(text=f"{self.custom_name}: {self.value:.2f} V")
+            self.update_display_id = self.after(100, self.update_display)
+        except tk.TclError:
+            return
+
     def remove_widget(self):
+        if self.update_display_id:
+            self.after_cancel(self.update_display_id)
         self.release_device()
         self.destroy()
 

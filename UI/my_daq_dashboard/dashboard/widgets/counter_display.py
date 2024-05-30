@@ -9,6 +9,7 @@ class CounterDisplay(tk.Label):
         self.counter_num = counter_num
         self.value = 0  # Add a value attribute
         self.locked = False
+        self.update_display_id = None  # To store the after callback ID
         self.custom_name = "Counter"  # Add a custom name attribute
         self.bind("<Button-1>", on_drag_start)
         self.bind("<B1-Motion>", on_drag_motion)
@@ -16,10 +17,19 @@ class CounterDisplay(tk.Label):
         self.update_display()
 
     def update_display(self):
-        self.value = ul.c_in(self.board_num, self.counter_num)
-        self.config(text=f"{self.custom_name}: {self.value}")
-        self.after(500, self.update_display)
+        try:
+            self.value = ul.c_in(self.board_num, self.counter_num)
+            self.config(text=f"{self.custom_name}: {self.value}")
+            self.update_display_id = self.after(500, self.update_display)
+        except tk.TclError:
+            # This exception occurs if the widget is destroyed while the callback is still scheduled
+            return
 
     def rename(self, new_name):
         self.custom_name = new_name
         self.config(text=f"{self.custom_name}: {self.value}")
+
+    def remove_widget(self):
+        if self.update_display_id:
+            self.after_cancel(self.update_display_id)  # Cancel the scheduled update
+        self.destroy()

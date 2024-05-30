@@ -11,6 +11,7 @@ class DigitalInBinaryIndicator(tk.Label):
         self.port_type = port_type
         self.locked = False
         self.value = 0  # Add a value attribute
+        self.update_indicator_id = None  # To store the after callback ID
         self.custom_name = "Digital In"  # Add a custom name attribute
         self.bind("<Button-1>", on_drag_start)
         self.bind("<B1-Motion>", on_drag_motion)
@@ -21,10 +22,18 @@ class DigitalInBinaryIndicator(tk.Label):
         try:
             self.value = ul.d_in(self.board_num, self.port_type)
             self.config(text=f"{self.custom_name} {self.port_type.name}: {self.value}")
-            self.after(100, self.update_indicator)  # Refresh every 100ms
+            self.update_indicator_id = self.after(100, self.update_indicator)  # Refresh every 100ms
         except ULError as e:
             print(f"Error reading digital input: {e}")
+        except tk.TclError:
+            # This exception occurs if the widget is destroyed while the callback is still scheduled
+            return
 
     def rename(self, new_name):
         self.custom_name = new_name
         self.config(text=f"{self.custom_name} {self.port_type.name}: {self.value}")
+
+    def remove_widget(self):
+        if self.update_indicator_id:
+            self.after_cancel(self.update_indicator_id)  # Cancel the scheduled update
+        self.destroy()
