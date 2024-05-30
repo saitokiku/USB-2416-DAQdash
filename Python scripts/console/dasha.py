@@ -163,6 +163,16 @@ class DashboardApp:
             display = AnalogInDisplay(self.dashboard_frame)
             display.place(x=20, y=260)
 
+    def read_analog_input(self, channel):
+        # Replace this with the actual implementation to read from the DAQ device
+        # This is just a placeholder example
+        value = 0.0  # Dummy value, replace with actual data reading logic
+        return value
+
+    def add_analog_in(self):
+        display = AnalogInDisplay(self.dashboard_frame)
+        display.update_display()   
+
     def initialize_device(self):
         try:
             ul.ignore_instacal()
