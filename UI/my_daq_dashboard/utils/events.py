@@ -42,3 +42,9 @@ def toggle_lock(widget):
     widget.locked = not getattr(widget, 'locked', False)
     lock_status = "Locked" if widget.locked else "Unlocked"
     print(f"Widget {lock_status}")
+    
+    if widget.locked:
+        widget.config(highlightbackground="red", highlightcolor="red", highlightthickness=2)
+    else:
+        widget.config(highlightthickness=0)
+
