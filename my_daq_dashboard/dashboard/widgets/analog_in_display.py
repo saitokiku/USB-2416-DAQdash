@@ -26,7 +26,7 @@ class AnalogInDisplay(tk.Frame):
         self.board_num = 0
         self.low_chan = 0
         self.high_chan = 0  # Assuming a single channel for simplicity; adjust as needed
-        self.rate = 10  # Rate per channel
+        self.rate = 50  # Rate per channel
         self.points_per_channel = 100
         self.total_count = self.points_per_channel * (self.high_chan - self.low_chan + 1)
         self.ai_range = ULRange.BIP10VOLTS  # Voltage range
