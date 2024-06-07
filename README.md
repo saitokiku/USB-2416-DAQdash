@@ -3,3 +3,5 @@
 - Run Main.py inside my_daq_dashbaord.
 
 - Grapy: standalone analog in utility. Change channel within code. 
+
+requirements: Tkinter, MCCULW via pip
