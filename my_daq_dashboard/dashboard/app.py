@@ -93,6 +93,10 @@ class DashboardApp:
         self.dashboard_menu.add_command(label='Save Tab', command=self.save_tab)
         self.dashboard_menu.add_command(label='Load Tab', command=self.load_tab)
 
+        self.file_menu = Menu(self.menu, tearoff=0)
+        self.menu.add_cascade(label='File', menu=self.file_menu)
+        self.file_menu.add_command(label='Save Scan Data', command=self.save_scan_data)
+
     def add_tab(self):
         tab_count = len(self.notebook.tabs()) + 1
         new_tab = ttk.Frame(self.notebook)
@@ -219,4 +223,21 @@ class DashboardApp:
                 new_widget.place(x=x, y=y)
 
             self.update_status(f"Loaded tab from {file_path}")
+
+    def save_scan_data(self):
+        rate = 1  # Set to a lower rate if needed for testing
+        file_name = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv")])
+        if file_name:
+            try:
+                scan_to_file = ScanToFile(self.board_num, rate, file_name)
+                scan_to_file.run_scan()
+                self.update_status(f"Saved scan data to {file_name}")
+                print(f"Scan data saved to {file_name}")
+            except Exception as e:
+                messagebox.showerror("Save Error", str(e))
+                self.update_status("Save Error")
+
+
+
+
 

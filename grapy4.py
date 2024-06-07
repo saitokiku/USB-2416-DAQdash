@@ -12,7 +12,7 @@ import time
 board_num = 0
 low_chan = 0
 high_chan = 0  # Assuming a single channel for simplicity; adjust as needed
-rate = 100  # High rate per channel
+rate = 75  # High rate per channel
 points_per_channel = 100
 total_count = points_per_channel * (high_chan - low_chan + 1)
 ai_range = ULRange.BIP10VOLTS  # Voltage range

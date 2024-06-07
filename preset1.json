@@ -1,0 +1,1 @@
+[{"class": "DigitalOutButton", "x": 20, "y": 20, "width": 230, "height": 61}, {"class": "DigitalInBinaryIndicator", "x": 20, "y": 100, "width": 226, "height": 50}, {"class": "AnalogInDisplay", "x": 255, "y": 23, "width": 640, "height": 530}]
