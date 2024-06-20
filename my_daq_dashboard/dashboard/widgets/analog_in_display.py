@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import simpledialog
+from tkinter import simpledialog, filedialog, messagebox
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -10,10 +10,21 @@ from mcculw.device_info import DaqDeviceInfo
 from ctypes import c_double
 import threading
 from utils.events import on_drag_start, on_drag_motion, right_click_menu
+from utils.device_utils import initialize_device, set_channel_settings
 
 class AnalogInDisplay(tk.Frame):
     def __init__(self, master, app, **kwargs):
+        """
+        Initialize an instance of the AnalogInDisplay class.
+
+        Args:
+            master (tk.Tk): The parent widget.
+            app: The main application instance.
+            **kwargs: Additional keyword arguments for the tk.Frame initialization.
+        """
         super().__init__(master, **kwargs)
+        
+        # Initialize instance variables
         self.app = app
         self.custom_name = "Analog In"
         self.value = 0.00
@@ -25,24 +36,34 @@ class AnalogInDisplay(tk.Frame):
         # Configuration Parameters
         self.board_num = 0
         self.low_chan = 0
-        self.high_chan = 0  # Assuming a single channel for simplicity; adjust as needed
-        self.rate = 80  # Rate per channel
+        self.high_chan = 0
+        self.rate = 80
         self.points_per_channel = 100
         self.total_count = self.points_per_channel * (self.high_chan - self.low_chan + 1)
-        self.ai_range = ULRange.BIP10VOLTS  # Voltage range
+        self.ai_range = ULRange.BIP10VOLTS
         self.scan_options = ScanOptions.BACKGROUND | ScanOptions.SCALEDATA | ScanOptions.CONTINUOUS
 
+        # Initialize buffer
         self.buffer = np.zeros(self.total_count, dtype=np.float64)
-        self.discover_and_configure_device()
-        self.set_channel_settings(self.board_num)
 
+        try:
+            # Initialize and configure DAQ device
+            device = initialize_device(self.board_num)
+            set_channel_settings(self.board_num)
+            self.scalar_label.config(text=f"Connected to {device.product_name}")
+        except Exception as e:
+            messagebox.showerror("Initialization Error", str(e))
+
+        # Initialize plot and start data acquisition
         self.init_plot()
         self.run_scan()
 
+        # Bind mouse events
         self.bind("<Button-1>", on_drag_start)
         self.bind("<B1-Motion>", on_drag_motion)
         self.bind("<Button-3>", lambda event: right_click_menu(event, self))
 
+    # ... rest of the AnalogInDisplay class remains unchanged ..
     def init_plot(self):
         self.fig, self.ax = plt.subplots()
         self.x_data = np.arange(0, self.points_per_channel)

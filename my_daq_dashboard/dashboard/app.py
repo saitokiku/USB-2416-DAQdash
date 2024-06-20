@@ -6,6 +6,7 @@ from dashboard.widgets.digital_out_button import DigitalOutButton
 from dashboard.widgets.digital_in_binary_indicator import DigitalInBinaryIndicator
 from dashboard.widgets.counter_display import CounterDisplay
 from dashboard.widgets.analog_in_display import AnalogInDisplay
+from dashboard.widgets.ContinuousDataRecorder import ContinuousDataRecorder
 import os
 import json
 
@@ -64,6 +65,12 @@ class DashboardApp:
         # Create the first tab
         self.add_tab()
 
+    def add_continuous_data_recorder(self):
+        current_tab = self.notebook.nametowidget(self.notebook.select())
+        recorder = ContinuousDataRecorder(current_tab, self.board_num)
+        recorder.place(x=20, y=340)
+        self.update_status("Added Continuous Data Recorder")
+
     def create_header(self):
         self.serial_label = ttk.Label(self.header_frame, text=f"Board Serial Number: {self.serial_number}", anchor="e")
         self.serial_label.pack(side=tk.LEFT)
@@ -88,6 +95,7 @@ class DashboardApp:
         self.dashboard_menu.add_command(label='Add Digital In', command=self.add_digital_in)
         self.dashboard_menu.add_command(label='Add Counter Display', command=self.add_counter)
         self.dashboard_menu.add_command(label='Add Analog In Display', command=self.add_analog_in)
+        self.dashboard_menu.add_command(label='Add Continuous Data Recorder', command=self.add_continuous_data_recorder)
         self.dashboard_menu.add_separator()
         self.dashboard_menu.add_command(label='New Tab', command=self.add_tab)
         self.dashboard_menu.add_command(label='Save Tab', command=self.save_tab)
@@ -95,7 +103,6 @@ class DashboardApp:
 
         self.file_menu = Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label='File', menu=self.file_menu)
-        self.file_menu.add_command(label='Save Scan Data', command=self.save_scan_data)
 
     def add_tab(self):
         tab_count = len(self.notebook.tabs()) + 1
@@ -224,18 +231,6 @@ class DashboardApp:
 
             self.update_status(f"Loaded tab from {file_path}")
 
-    def save_scan_data(self):
-        rate = 1  # Set to a lower rate if needed for testing
-        file_name = filedialog.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv")])
-        if file_name:
-            try:
-                scan_to_file = ScanToFile(self.board_num, rate, file_name)
-                scan_to_file.run_scan()
-                self.update_status(f"Saved scan data to {file_name}")
-                print(f"Scan data saved to {file_name}")
-            except Exception as e:
-                messagebox.showerror("Save Error", str(e))
-                self.update_status("Save Error")
 
 
 
